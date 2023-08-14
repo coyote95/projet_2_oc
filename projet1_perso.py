@@ -45,13 +45,27 @@ def data(soup, produit):
             th.append(tr.find("th").get_text())  # colonne 1 avec header
             td.append(tr.find("td").get_text())  # colonne 2 avec valeur
 
+    description_livre = soup.find('h2',string="Product Description").find_next("p").string
+
+    category_in_list_breadcrumb=soup.find("ul",class_="breadcrumb").find_all('li')[2].get_text()
+
+    print(category_in_list_breadcrumb)
+
     dict_livre_info = {
         "universal_product_code(upc)": td[0],
         "price_excluding_tax": td[2],
         "price_including_tax": td[3],
         "number_available": td[5],
-        "review_rating": td[6]
+        "review_rating": td[6],
+        "title": soup.find('h1').string,
+        "product_page_url": URL_page_livre,
+        "product_description":description_livre,
+        "category":category_in_list_breadcrumb
     }
+
+    print(description_livre)
+
+    print(soup.find('h1').string)
     print(th)
     print(td)
     produit.append(dict_livre_info)
