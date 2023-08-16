@@ -84,6 +84,18 @@ def download_image(image_url, save_path):
     urllib.request.urlretrieve(image_url, save_path)
     return
 
+def all_url_livre(soup):
+    liste_links = []
+    for h3 in soup.find_all("h3"):
+        print(f"le titre H3 est:{h3}")
+        a=h3.find("a")
+        link_relatif=a["href"]
+        link_absolu=URL_home+ link_relatif
+        print(f"le titre href est:{link_absolu}")
+        liste_links.append(link_absolu)
+
+    return liste_links
+
 
 def main():
     html_home = extract_data(URL_home)
@@ -109,6 +121,9 @@ def main():
     print(image_save_path)
 
     download_image(url_livres, image_save_path)
+
+    liste=all_url_livre(soup_home)
+    print (liste)
 
     return
 
