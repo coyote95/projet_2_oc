@@ -1,7 +1,8 @@
 import csv
-
 from bs4 import BeautifulSoup
 import requests
+import urllib.request
+import os
 
 URL_home = "http://books.toscrape.com/"
 URL_page_livre = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
@@ -45,9 +46,15 @@ def data(soup, produit):
             th.append(tr.find("th").get_text())  # colonne 1 avec header
             td.append(tr.find("td").get_text())  # colonne 2 avec valeur
 
-    description_livre = soup.find('h2',string="Product Description").find_next("p").string
+    description_livre = soup.find('h2', string="Product Description").find_next("p").string
 
-    category_in_list_breadcrumb=soup.find("ul",class_="breadcrumb").find_all('li')[2].get_text()
+    category_in_list_breadcrumb = soup.find("ul", class_="breadcrumb").find_all('li')[2].get_text()
+
+    image_url = soup.img["src"]
+    image_url = str(image_url).replace("../../", "")
+    image_url_all = URL_home + image_url
+
+    print(f'url de image:{image_url_all}')
 
     print(category_in_list_breadcrumb)
 
@@ -59,16 +66,23 @@ def data(soup, produit):
         "review_rating": td[6],
         "title": soup.find('h1').string,
         "product_page_url": URL_page_livre,
-        "product_description":description_livre,
-        "category":category_in_list_breadcrumb
+        "product_description": description_livre,
+        "category": category_in_list_breadcrumb,
+        "img_url": image_url_all
     }
 
-    print(description_livre)
-
-    print(soup.find('h1').string)
-    print(th)
-    print(td)
+    # print(description_livre)
+    # print(soup.find('h1').string)
+    # print(th)
+    # print(td)
     produit.append(dict_livre_info)
+
+    return produit
+
+
+def download_image(image_url, save_path):
+    urllib.request.urlretrieve(image_url, save_path)
+    return
 
 
 def main():
@@ -82,8 +96,19 @@ def main():
 
     produit = []
 
-    data(soup_livre, produit)
+    livre = data(soup_livre, produit)
     fichier_csv(soup_livre, produit)
+
+    if not os.path.exists('images'):
+        os.makedirs('images')
+
+    url_livres = livre[0].get("img_url")
+    name_livres = livre[0].get("title")
+
+    image_save_path = os.path.join('images', f"{name_livres}.jpg")
+    print(image_save_path)
+
+    download_image(url_livres, image_save_path)
 
     return
 
