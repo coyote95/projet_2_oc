@@ -26,7 +26,7 @@ def title(soup):
 
 def fichier_csv(soup, produit):
     titre_fichier = "livre1"
-    with open(f"{titre_fichier}.csv", "w", newline="") as fichier:
+    with open(f"{titre_fichier}.csv", "w+", newline="") as fichier:
         fieldnames = ["product_page_url", "universal_product_code(upc)", "title", "price_including_tax",
                       "price_excluding_tax", "number_available", "product_description", "category", "review_rating",
                       "img_url"]
@@ -38,9 +38,11 @@ def fichier_csv(soup, produit):
         return
 
 
-def data(soup, produit):
+def data(soup, produits,page):
+
     th = []
     td = []
+
     for table in soup.find_all('table'):
         for tr in table.find_all("tr"):
             th.append(tr.find("th").get_text())  # colonne 1 avec header
@@ -54,9 +56,9 @@ def data(soup, produit):
     image_url = str(image_url).replace("../../", "")
     image_url_all = URL_home + image_url
 
-    print(f'url de image:{image_url_all}')
+    #print(f'url de image:{image_url_all}')
 
-    print(category_in_list_breadcrumb)
+    #print(category_in_list_breadcrumb)
 
     dict_livre_info = {
         "universal_product_code(upc)": td[0],
@@ -65,7 +67,7 @@ def data(soup, produit):
         "number_available": td[5],
         "review_rating": td[6],
         "title": soup.find('h1').string,
-        "product_page_url": URL_page_livre,
+        "product_page_url": page,
         "product_description": description_livre,
         "category": category_in_list_breadcrumb,
         "img_url": image_url_all
@@ -75,9 +77,9 @@ def data(soup, produit):
     # print(soup.find('h1').string)
     # print(th)
     # print(td)
-    produit.append(dict_livre_info)
+    produits.append(dict_livre_info)
 
-    return produit
+    return produits
 
 
 def download_image(image_url, save_path):
@@ -97,19 +99,31 @@ def all_url_livre(soup):
     return liste_links
 
 
+
 def main():
+    produits = []
     html_home = extract_data(URL_home)
-    html_page_livre = extract_data(URL_page_livre)
     soup_home = BeautifulSoup(html_home, "html.parser")
-    soup_livre = BeautifulSoup(html_page_livre, "html.parser")
-    print(title(soup_home))
-    save_page_html(soup_home, "page_home_html.txt")
-    save_page_html(soup_livre, "page_livre.txt")
 
-    produit = []
+    page_livre = all_url_livre(soup_home)
 
-    livre = data(soup_livre, produit)
-    fichier_csv(soup_livre, produit)
+    for page in page_livre:
+        html_page=extract_data(page)
+        soup_page=BeautifulSoup(html_page,"html.parser")
+
+    #html_page_livre = extract_data(URL_page_livre)
+    #soup_livre = BeautifulSoup(html_page_livre, "html.parser")
+
+
+
+        save_page_html(soup_home, "page_home_html.txt")
+        save_page_html(soup_page, "page_livre.txt")
+
+
+
+        livre = data(soup_page, produits,page)
+        print(f"le livre est{livre}")
+        fichier_csv(soup_page, produits)
 
     if not os.path.exists('images'):
         os.makedirs('images')
@@ -118,12 +132,12 @@ def main():
     name_livres = livre[0].get("title")
 
     image_save_path = os.path.join('images', f"{name_livres}.jpg")
-    print(image_save_path)
+    #print(image_save_path)
 
     download_image(url_livres, image_save_path)
 
-    liste=all_url_livre(soup_home)
-    print (liste)
+
+    #print (page_livre)
 
     return
 
