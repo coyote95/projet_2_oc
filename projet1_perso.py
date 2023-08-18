@@ -72,12 +72,13 @@ def data(soup, produits, page):
 
     return produits
 
-def data_rubrique(soup,liste_rubrique):
+
+def data_rubrique(soup, liste_rubrique):
     for li in soup.find("ul", class_="nav nav-list").find_all("li"):
-        a=li.find("a")
-        rubrique=a.string.replace('\n','').replace(" ","")
-        url_rubrique_relatif=str(a["href"])
-        url_rubrique=URL_home.replace('index.html', '')+url_rubrique_relatif
+        a = li.find("a")
+        rubrique = a.string.replace('\n', '').replace(" ", "")
+        url_rubrique_relatif = str(a["href"])
+        url_rubrique = URL_home.replace('index.html', '') + url_rubrique_relatif
         dict_rubrique = {
             "name": rubrique,
             "url": url_rubrique,
@@ -85,7 +86,6 @@ def data_rubrique(soup,liste_rubrique):
         liste_rubrique.append(dict_rubrique)
 
     return liste_rubrique
-
 
 
 def download_image(image_url, save_path):
@@ -120,55 +120,61 @@ def main():
     html_home = extract_data(URL_home)
     soup_home = BeautifulSoup(html_home, "html.parser")
 
-    # html_current = html_home
-    # soup_current = soup_home
-    #
-    # URL_current = "http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html"
-    # url_home_page = URL_current.replace('index.html', "")
-    # page_livre = []
-    #
-    # while True:
-    #     html_current = extract_data(URL_current)
-    #     soup_current = BeautifulSoup(html_current, "html.parser")
-    #     lien_next = soup_current.find("a", string="next")
-    #     if lien_next:
-    #         page_livre = page_livre + all_url_livre(soup_current)
-    #         URL_current = url_home_page + lien_next["href"]
-    #
-    #     else:
-    #         print('Page sans lien next:\n')
-    #         page_livre_sans_next = all_url_livre(soup_current)
-    #         page_livre = page_livre + page_livre_sans_next
-    #         break
-    #
-    #
-    # for page in page_livre:
-    #     print(f'la page est: {page}')
-    #     html_page = extract_data(page)
-    #     soup_page = BeautifulSoup(html_page, "html.parser")
-    #     data(soup_page, produits, page)
-    #     fichier_csv(soup_page, produits)
-    #
-    # ########################      enregistrement des images     ###################
-    #
-    # if not os.path.exists('images'):
-    #     os.makedirs('images')
-    #
-    # for url_livres in produits:
-    #     url = url_livres.get("img_url")
-    #     name_livre = url_livres.get("title")
-    #     name_livre = clean_name(name_livre)
-    #     image_save_path = os.path.join('images', f"{name_livre}.jpg")
-    #     download_image(url, image_save_path)
-    #
-    # print(page_livre)
+    html_current = html_home
+    soup_current = soup_home
+
+    #URL_current = "http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html"
+    URL_current =URL_home
+    url_home_page = URL_current.replace('index.html', "")
+    page_livre = []
 
     ###################################recupérer les rubriques#########################
-    liste_rubrique=[]
-    liste_rubrique=data_rubrique(soup_home,liste_rubrique)
-    #print(liste_rubrique)
-    for rubrique in liste_rubrique:
+    liste_rubrique = []
+    liste_rubrique = data_rubrique(soup_home, liste_rubrique)
+    # print(liste_rubrique)
+
+    for rubrique in liste_rubrique[1:3]:
         print(rubrique.get("name"))
+        URL_current = rubrique.get("url")
+        URL_current_home=str(URL_current).replace("index.html","")
+        print(f'url est : {URL_current}\n')
+        while True:
+            html_current = extract_data(URL_current)
+            soup_current = BeautifulSoup(html_current, "html.parser")
+            lien_next = soup_current.find("a", string="next")
+            if lien_next:
+                print(lien_next)
+                page_livre = page_livre + all_url_livre(soup_current)
+                URL_current =URL_current_home + lien_next["href"]
+                print(URL_current)
+            else:
+
+                print('Page sans lien next:\n')
+                print(lien_next)
+                page_livre_sans_next = all_url_livre(soup_current)
+                page_livre = page_livre + page_livre_sans_next
+                break
+
+        for page in page_livre:
+            print(f'la page est: {page}')
+            html_page = extract_data(page)
+            soup_page = BeautifulSoup(html_page, "html.parser")
+            data(soup_page, produits, page)
+            fichier_csv(soup_page, produits)
+
+    ########################      enregistrement des images     ###################
+
+    if not os.path.exists('images'):
+        os.makedirs('images')
+
+    for url_livres in produits:
+        url = url_livres.get("img_url")
+        name_livre = url_livres.get("title")
+        name_livre = clean_name(name_livre)
+        image_save_path = os.path.join('images', f"{name_livre}.jpg")
+        download_image(url, image_save_path)
+
+    print(page_livre)
 
     return
 
