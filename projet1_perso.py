@@ -123,7 +123,6 @@ def main():
     html_current = html_home
     soup_current = soup_home
 
-    #URL_current = "http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html"
     URL_current =URL_home
     url_home_page = URL_current.replace('index.html', "")
 
@@ -131,29 +130,23 @@ def main():
     ###################################recupérer les rubriques#########################
     liste_rubrique = []
     liste_rubrique = data_rubrique(soup_home, liste_rubrique)
-    # print(liste_rubrique)
     page_livre = []
-    for rubrique in liste_rubrique[1:3]:
+    for rubrique in liste_rubrique[]:
         produits.clear()
         page_livre.clear()
         print(rubrique.get("name"))
         name_csv=rubrique.get("name")
         URL_current = rubrique.get("url")
         URL_current_home=str(URL_current).replace("index.html","")
-        print(f'url est : {URL_current}\n')
+
         while True:
             html_current = extract_data(URL_current)
             soup_current = BeautifulSoup(html_current, "html.parser")
             lien_next = soup_current.find("a", string="next")
             if lien_next:
-                print(lien_next)
                 page_livre = page_livre + all_url_livre(soup_current)
                 URL_current =URL_current_home + lien_next["href"]
-                print(URL_current)
             else:
-
-                print('Page sans lien next:\n')
-                print(lien_next)
                 page_livre_sans_next = all_url_livre(soup_current)
                 page_livre = page_livre + page_livre_sans_next
                 break
@@ -176,8 +169,6 @@ def main():
             name_livre = clean_name(name_livre)
             image_save_path = os.path.join(name_csv, f"{name_livre}.jpg")
             download_image(url, image_save_path)
-
-
 
     return
 
