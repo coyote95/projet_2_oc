@@ -25,8 +25,8 @@ def title(soup):
     return soup.title.string.strip("\n")
 
 
-def fichier_csv(soup, produit):
-    titre_fichier = "livre1"
+def fichier_csv(soup, produit,name_csv):
+    titre_fichier = name_csv
     with open(f"{titre_fichier}.csv", "w+", newline="", encoding="utf-8") as fichier:
         fieldnames = ["product_page_url", "universal_product_code(upc)", "title", "price_including_tax",
                       "price_excluding_tax", "number_available", "product_description", "category", "review_rating",
@@ -126,15 +126,18 @@ def main():
     #URL_current = "http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html"
     URL_current =URL_home
     url_home_page = URL_current.replace('index.html', "")
-    page_livre = []
+
 
     ###################################recupérer les rubriques#########################
     liste_rubrique = []
     liste_rubrique = data_rubrique(soup_home, liste_rubrique)
     # print(liste_rubrique)
-
+    page_livre = []
     for rubrique in liste_rubrique[1:3]:
+        produits.clear()
+        page_livre.clear()
         print(rubrique.get("name"))
+        name_csv=rubrique.get("name")
         URL_current = rubrique.get("url")
         URL_current_home=str(URL_current).replace("index.html","")
         print(f'url est : {URL_current}\n')
@@ -160,21 +163,21 @@ def main():
             html_page = extract_data(page)
             soup_page = BeautifulSoup(html_page, "html.parser")
             data(soup_page, produits, page)
-            fichier_csv(soup_page, produits)
+            fichier_csv(soup_page, produits,name_csv)
 
     ########################      enregistrement des images     ###################
 
-    if not os.path.exists('images'):
-        os.makedirs('images')
+        if not os.path.exists(name_csv):
+            os.makedirs(name_csv)
 
-    for url_livres in produits:
-        url = url_livres.get("img_url")
-        name_livre = url_livres.get("title")
-        name_livre = clean_name(name_livre)
-        image_save_path = os.path.join('images', f"{name_livre}.jpg")
-        download_image(url, image_save_path)
+        for url_livres in produits:
+            url = url_livres.get("img_url")
+            name_livre = url_livres.get("title")
+            name_livre = clean_name(name_livre)
+            image_save_path = os.path.join(name_csv, f"{name_livre}.jpg")
+            download_image(url, image_save_path)
 
-    print(page_livre)
+
 
     return
 
