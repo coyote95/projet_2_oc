@@ -1,7 +1,8 @@
-import csv
-
 from bs4 import BeautifulSoup
 import requests
+import urllib.request
+import os
+import csv
 
 URL_home = "http://books.toscrape.com/"
 URL_page_livre = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
@@ -25,7 +26,9 @@ def title(soup):
 
 def fichier_csv(soup, produit):
     titre_fichier = "livre1"
+
     with open(f"{titre_fichier}.csv", "w", newline="") as fichier:
+
         fieldnames = ["product_page_url", "universal_product_code(upc)", "title", "price_including_tax",
                       "price_excluding_tax", "number_available", "product_description", "category", "review_rating",
                       "img_url"]
@@ -37,19 +40,35 @@ def fichier_csv(soup, produit):
         return
 
 
+
+def data(soup, produits,page):
+
+    th = []
+    td = []
+
+
 def data(soup, produit):
     th = []
     td = []
+
     for table in soup.find_all('table'):
         for tr in table.find_all("tr"):
             th.append(tr.find("th").get_text())  # colonne 1 avec header
             td.append(tr.find("td").get_text())  # colonne 2 avec valeur
 
-    description_livre = soup.find('h2',string="Product Description").find_next("p").string
 
-    category_in_list_breadcrumb=soup.find("ul",class_="breadcrumb").find_all('li')[2].get_text()
+    description_livre = soup.find('h2', string="Product Description").find_next("p").string
 
-    print(category_in_list_breadcrumb)
+    category_in_list_breadcrumb = soup.find("ul", class_="breadcrumb").find_all('li')[2].get_text()
+
+    image_url = soup.img["src"]
+    image_url = str(image_url).replace("../../", "")
+    image_url_all = URL_home + image_url
+
+    #print(f'url de image:{image_url_all}')
+
+    #print(category_in_list_breadcrumb)
+
 
     dict_livre_info = {
         "universal_product_code(upc)": td[0],
@@ -79,6 +98,7 @@ def main():
     print(title(soup_home))
     save_page_html(soup_home, "page_home_html.txt")
     save_page_html(soup_livre, "page_livre.txt")
+
 
     produit = []
 
