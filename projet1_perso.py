@@ -30,6 +30,8 @@ def fichier_csv(produit, name_csv):
 def data_livres(soup, produits, page):
     th = []
     td = []
+
+    #objet dans data libre
     for table in soup.find_all('table'):
         for tr in table.find_all("tr"):
             th.append(tr.find("th").get_text())  # colonne 1 avec header
@@ -46,7 +48,7 @@ def data_livres(soup, produits, page):
     image_url = soup.img["src"]
     image_url = str(image_url).replace("../", "")
     image_url_all = url_home.replace('index.html', '') + image_url
-
+#autre fonctions
     dict_livre_info = {
         "universal_product_code(upc)": td[0],
         "price_excluding_tax": td[2],
@@ -121,7 +123,7 @@ def main():
     # ***************************        recupérer les rubriques     **********************
 
     liste_rubrique = data_rubrique(soup_home, liste_rubrique)
-
+#extraction
     for rubrique in liste_rubrique[1:3]:
         produits.clear()
         page_livre.clear()
