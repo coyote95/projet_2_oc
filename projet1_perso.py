@@ -4,8 +4,10 @@ import requests
 import urllib.request
 import os
 
+
 URL_home = "http://books.toscrape.com/index.html"
 URL_current = "http://books.toscrape.com/catalogue/category/books/sequential-art_5/index.html"
+
 URL_page_livre = "http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html"
 
 
@@ -27,7 +29,9 @@ def title(soup):
 
 def fichier_csv(soup, produit):
     titre_fichier = "livre1"
+
     with open(f"{titre_fichier}.csv", "w+", newline="", encoding="utf-8") as fichier:
+
         fieldnames = ["product_page_url", "universal_product_code(upc)", "title", "price_including_tax",
                       "price_excluding_tax", "number_available", "product_description", "category", "review_rating",
                       "img_url"]
@@ -39,13 +43,16 @@ def fichier_csv(soup, produit):
         return
 
 
+
 def data(soup, produits, page):
     th = []
     td = []
+
     for table in soup.find_all('table'):
         for tr in table.find_all("tr"):
             th.append(tr.find("th").get_text())  # colonne 1 avec header
             td.append(tr.find("td").get_text())  # colonne 2 avec valeur
+
 
     description_livre = soup.find('h2', string="Product Description").find_next("p").string
 
@@ -53,7 +60,9 @@ def data(soup, produits, page):
 
     image_url = soup.img["src"]
     image_url = str(image_url).replace("../../", "")
+
     image_url_all = URL_home.replace('index.html', '') + image_url
+
 
     dict_livre_info = {
         "universal_product_code(upc)": td[0],
@@ -62,6 +71,7 @@ def data(soup, produits, page):
         "number_available": td[5],
         "review_rating": td[6],
         "title": soup.find('h1').string,
+
         "product_page_url": page,
         "product_description": description_livre,
         "category": category_in_list_breadcrumb,
@@ -175,6 +185,13 @@ def main():
         download_image(url, image_save_path)
 
     print(page_livre)
+
+
+
+    produit = []
+
+    data(soup_livre, produit)
+    fichier_csv(soup_livre, produit)
 
     return
 
