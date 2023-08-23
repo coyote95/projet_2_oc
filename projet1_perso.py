@@ -4,10 +4,12 @@ import requests
 import urllib.request
 import os
 
+
 url_home = "http://books.toscrape.com/index.html"
 
 
 def extract_html(url):
+
     response = requests.get(url)
     html = response.content
     return html
@@ -32,10 +34,12 @@ def data_livres(soup, produits, page):
     td = []
 
     #objet dans data libre
+
     for table in soup.find_all('table'):
         for tr in table.find_all("tr"):
             th.append(tr.find("th").get_text())  # colonne 1 avec header
             td.append(tr.find("td").get_text())  # colonne 2 avec valeur
+
 
     h2 = soup.find('h2', string="Product Description")
     if h2:
@@ -43,12 +47,15 @@ def data_livres(soup, produits, page):
     else:
         description_livre = "none"
 
+
     category_in_list_breadcrumb = soup.find("ul", class_="breadcrumb").find_all('li')[2].get_text()
 
     image_url = soup.img["src"]
+
     image_url = str(image_url).replace("../", "")
     image_url_all = url_home.replace('index.html', '') + image_url
 #autre fonctions
+
     dict_livre_info = {
         "universal_product_code(upc)": td[0],
         "price_excluding_tax": td[2],
@@ -70,6 +77,7 @@ def data_livres(soup, produits, page):
 def data_rubrique(soup, liste_rubrique):
     for li in soup.find("ul", class_="nav nav-list").find_all("li"):
         a = li.find("a")
+
         rubrique = a.string.strip()
         url_rubrique_relatif = str(a["href"])
         url_rubrique_absolu = url_home.replace('index.html', '') + url_rubrique_relatif
@@ -98,14 +106,17 @@ def all_url_livre(soup):
     return liste_links
 
 
+
 def clean_name(file_title):
     new_name = ""
     valid_chars = "-_.()abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     for c in file_title:
+
         if c in valid_chars:
             new_name += c
         else:
             new_name += "_"
+
     if len(new_name) > 30:
         new_name = new_name[:30]
 
@@ -114,6 +125,7 @@ def clean_name(file_title):
 
 def main():
     produits = []
+
     page_livre = []
     liste_rubrique = []
 
@@ -160,6 +172,7 @@ def main():
             name_livre = clean_name(name_livre)
             image_save_path = os.path.join(f"images/{name_csv}", f"{name_livre}.jpg")
             download_image(url, image_save_path)
+
 
     return
 
