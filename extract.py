@@ -6,10 +6,11 @@ url_home = "http://books.toscrape.com/index.html"
 
 def extract_html(url):
     response = requests.get(url)
-    if response.status_code==200:
+    if response.status_code == 200:
         html = response.content
     else:
         print("fail connection!")
+        html = 0
     return html
 
 
@@ -46,12 +47,12 @@ def url_image(soup):
     return image_url_all
 
 
-def data_rubrique(soup, liste_rubrique):
+def data_rubrique(soup, liste_rubrique, url_home_relatif):
     for li in soup.find("ul", class_="nav nav-list").find_all("li"):
         a = li.find("a")
         rubrique = a.string.strip()
         url_rubrique_relatif = str(a["href"])
-        url_rubrique_absolu = url_home.replace('index.html', '') + url_rubrique_relatif
+        url_rubrique_absolu = url_home_relatif + url_rubrique_relatif
         dict_rubrique = {
             "name": rubrique,
             "url": url_rubrique_absolu,

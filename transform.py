@@ -1,6 +1,10 @@
 import extract
 
 
+def delete_url_index(url):
+    return url.replace('index.html', '')
+
+
 def clean_name(file_title):
     new_name = ""
     valid_chars = "-_.()abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

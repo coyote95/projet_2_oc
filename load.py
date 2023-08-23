@@ -16,6 +16,7 @@ def fichier_csv(produit, name_csv):
             writer.writerow(livre)
         return
 
+
 def download_image(image_url, save_path):
     urllib.request.urlretrieve(image_url, save_path)
     return
