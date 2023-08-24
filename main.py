@@ -11,8 +11,8 @@ url_home = "http://books.toscrape.com/index.html"
 url_home_relatif = transform.delete_url_index(url_home)
 
 # category between 0 and 50
-first_category = 5
-last_category = 7
+first_category = 1
+last_category = 50
 
 
 def main():
