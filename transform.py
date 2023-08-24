@@ -8,13 +8,16 @@ import extract
 """
 
 
-def delete_url_index(url):
+def url_relatif(url):
     """
-    Removes 'index.html' from a URL
-    :param url: (str) url with index.html
-    :return: (str) url modified
+    Removes last element in URL
+    :param url: (str) url with ex /index.html
+    :return: (str) url modified ex /
     """
-    return url.replace('index.html', '')
+    path_segement=url.split("/")
+    new_path_segement=path_segement[:-1]
+    new_url="/".join(new_path_segement)+"/"
+    return new_url
 
 
 def clean_name(file_title):

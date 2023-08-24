@@ -8,7 +8,7 @@ import transform
 import load
 
 url_home = "http://books.toscrape.com/index.html"
-url_home_relatif = transform.delete_url_index(url_home)
+url_home_relatif = transform.url_relatif(url_home)
 
 # category between 0 and 50
 first_category = 0
@@ -17,7 +17,7 @@ last_category = 50
 
 def main():
     books_data_list = []
-    book_pages = []
+    list_all_urls_page = []
     categories_list = []
 
     html_home = extract.extract_html(url_home)
@@ -29,7 +29,7 @@ def main():
 
     for category in categories_list[first_category:last_category]:
         books_data_list.clear()
-        book_pages.clear()
+        list_all_urls_page.clear()
         print(category.get("name"))
         name_csv = category.get("name")
         url_current = category.get("url")
@@ -39,14 +39,13 @@ def main():
             soup_current = BeautifulSoup(html_current, "html.parser")
 
             if extract.next_link(soup_current):
-                book_pages += extract.all_book_urls(soup_current, url_home_relatif)
-                url_current = transform.delete_url_index(url_current) + extract.next_link(soup_current)["href"]
-                print(url_current)
+                list_all_urls_page += extract.all_book_urls(soup_current, url_home_relatif)
+                url_current = transform.url_relatif(url_current) + extract.next_link(soup_current)["href"]
             else:
-                book_pages += extract.all_book_urls(soup_current, url_home_relatif)
+                list_all_urls_page += extract.all_book_urls(soup_current, url_home_relatif)
                 break
 
-        for page in book_pages:
+        for page in list_all_urls_page:
             print(f"la page est: {page}")
             html_page = extract.extract_html(page)
             soup_page = BeautifulSoup(html_page, "html.parser")
