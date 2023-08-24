@@ -16,7 +16,7 @@ Install project with powershell windows:
     python -m venv env
     env\Scripts\activate
     git clone https://github.com/coyote95/projet_2_oc.git
-    pip install -r requirement.txt
+    pip install -r requirements.txt
     python main.py
 ```
 
