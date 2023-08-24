@@ -1,20 +1,32 @@
 import requests
 from bs4 import BeautifulSoup
+"""
+    Module for extract data from HTML content
+
+"""
 
 
 def extract_html(url):
+    """
+    Extract html code
+    :param url: (str)
+    :return: (str) html code
+    """
     response = requests.get(url)
     if response.status_code == 200:
         html = response.content
     else:
         print("Connection failed!")
-        html = 0
+        html = "0"
     return html
 
 
-# fonction extract colonne 2 tableau
-
 def column_table(soup):
+    """
+    Extracts data from the second column of a table
+    :param soup: BeautifulSoup object
+    :return: list of second collumn value
+    """
     th = []
     td = []
     for table in soup.find_all('table'):
@@ -25,6 +37,11 @@ def column_table(soup):
 
 
 def book_description(soup):
+    """
+    Extract paragraph with book description
+    :param soup: BeautifulSoup object
+    :return: paragraph with book description
+    """
     h2 = soup.find('h2', string="Product Description")
     if h2:
         book_description_paragraph = h2.find_next("p").string
@@ -34,17 +51,35 @@ def book_description(soup):
 
 
 def book_category(soup):
-    category_list = soup.find("ul", class_="breadcrumb").find_all('li')[2].get_text()
-    return category_list
+    """
+    Extract book category
+    :param soup: BeautifulSoup object
+    :return:(str) category
+    """
+    category = soup.find("ul", class_="breadcrumb").find_all('li')[2].get_text()
+    return category
 
 
 def url_image(soup, url_home_relatif):
-    image_url = str(soup.img["src"]).replace("../", "")
-    image_url_all = url_home_relatif + image_url
-    return image_url_all
+    """
+    Extract url image
+    :param soup: BeautifulSoup object
+    :param url_home_relatif: (str)
+    :return: (str) url absolute image
+    """
+    image_url_relatif = str(soup.img["src"]).replace("../", "")
+    image_url_absolute = url_home_relatif + image_url_relatif
+    return image_url_absolute
 
 
 def all_categories(soup, category_list, relative_home_url):
+    """
+    Extract all categories name
+    :param soup: BeautifulSoup object
+    :param category_list: existing list for completion
+    :param relative_home_url:
+    :return: category_list completed
+    """
     for li in soup.find("ul", class_="nav nav-list").find_all("li"):
         a = li.find("a")
         category_name = a.string.strip()
@@ -60,15 +95,26 @@ def all_categories(soup, category_list, relative_home_url):
 
 
 def all_book_urls(soup, url_home_relatif):
-    all_links = []
+    """
+Extract all book urls
+    :param soup:BeautifulSoup object
+    :param url_home_relatif:(str)
+    :return:list with all links
+    """
+    list_all_links = []
     for h3 in soup.find_all("h3"):
         a = h3.find("a")
         relatif_link = str(a["href"])
         absolute_link = url_home_relatif + str("catalogue/") + relatif_link.replace('../', "")
-        all_links.append(absolute_link)
+        list_all_links.append(absolute_link)
 
-    return all_links
+    return list_all_links
 
 
 def next_link(soup):
+    """
+    Find the next page link
+    :param soup: BeautifulSoup object
+    :return: None or the link of next page
+    """
     return soup.find("a", string="next")

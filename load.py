@@ -2,9 +2,19 @@ import csv
 import urllib.request
 import os
 
+"""
+Module for load:    -data in csv file 
+                    -load image
+"""
 
-# Function to create a CSV file with book data
 def csv_file(products, csv_name):
+    """
+    create a CSV file with book data
+    :param products: (list of dict)
+    :param csv_name: (str)
+    :return:None
+
+    """
     file_title = csv_name
     with open(f"{file_title}.csv", "w+", newline="", encoding="utf-8") as fichier:
         fieldnames = ["product_page_url", "universal_product_code(upc)", "title", "price_including_tax",
@@ -17,7 +27,15 @@ def csv_file(products, csv_name):
             writer.writerow(book)
         return
 
+
 # Function to download an image from a URL and save it to a specified path
 def download_image(image_url, save_path):
+    """
+    Download an image from a URL and save it to a specified path.
+    :param image_url: (str)
+    :param save_path: (str)
+    :return: none
+    """
     urllib.request.urlretrieve(image_url, save_path)
     return
+
