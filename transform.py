@@ -36,11 +36,11 @@ def clean_name(file_title):
     return new_name
 
 
-def data_books(soup, books_data_list, page, url_home_relatif):
+def dict_data_books(soup, page, url_home_relatif):
+
     """
-    Create dictionnary with data information and add information in list dictionnary
+    Create dictionnary with data information
     :param soup: Beautiful soup object
-    :param books_data_list: list of dict existing for completion
     :param page: (str)  url of book
     :param url_home_relatif:
     :return: books_data_list:list of dict completed
@@ -59,6 +59,4 @@ def data_books(soup, books_data_list, page, url_home_relatif):
         "img_url": extract.url_image(soup, url_home_relatif)
     }
 
-    books_data_list.append(book_info_dict)
-
-    return books_data_list
+    return book_info_dict

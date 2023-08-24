@@ -45,12 +45,12 @@ def main():
             else:
                 book_pages += extract.all_book_urls(soup_current, url_home_relatif)
                 break
-
+        book_data_dict={}
         for page in book_pages:
             print(f"la page est: {page}")
             html_page = extract.extract_html(page)
             soup_page = BeautifulSoup(html_page, "html.parser")
-            transform.data_books(soup_page, books_data_list, page, url_home_relatif)
+            books_data_list.append(transform.dict_data_books(soup_page, page, url_home_relatif))
             load.csv_file(books_data_list, name_csv)
 
         # *******************************     Save images    *********************
