@@ -24,4 +24,5 @@ Install project with powershell windows:
 
 If you don't want to scrap all categories, so change in "main.py" the line 14 and 15 with the first and last category that you want.
     
-![selection_rubrique](https://github.com/coyote95/projet_2_oc/assets/141831464/6452823c-edc4-406b-a83f-a7db21d18686)
+![selection_rubrique](https://github.com/coyote95/projet_2_oc/assets/141831464/673d1d98-a3e5-4f0d-9fc6-aa388e093693)
+
