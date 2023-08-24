@@ -1,10 +1,12 @@
 import extract
 
 
+# Removes 'index.html' from a URL
 def delete_url_index(url):
     return url.replace('index.html', '')
 
 
+# Cleans a file title and returns a valid name for file
 def clean_name(file_title):
     new_name = ""
     valid_chars = "-_.()abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -19,9 +21,9 @@ def clean_name(file_title):
     return new_name
 
 
-def data_livres(soup, produits, page):
-    td = extract.tableau_colonne(soup)
-    dict_livre_info = {
+def data_books(soup, products, page, url_home_relatif):
+    td = extract.column_table(soup)
+    book_info_dict = {
         "universal_product_code(upc)": td[0],
         "price_excluding_tax": td[2],
         "price_including_tax": td[3],
@@ -29,11 +31,11 @@ def data_livres(soup, produits, page):
         "review_rating": td[6],
         "title": soup.find('h1').string,
         "product_page_url": page,
-        "product_description": extract.description_livre(soup),
-        "category": extract.categorie(soup),
-        "img_url": extract.url_image(soup)
+        "product_description": extract.book_description(soup),
+        "category": extract.book_category(soup),
+        "img_url": extract.url_image(soup, url_home_relatif)
     }
 
-    produits.append(dict_livre_info)
+    products.append(book_info_dict)
 
-    return produits
+    return products

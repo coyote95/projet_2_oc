@@ -10,53 +10,57 @@ import load
 url_home = "http://books.toscrape.com/index.html"
 url_home_relatif = transform.delete_url_index(url_home)
 
+# category between 0 and 50
+first_category = 5
+last_category = 7
+
 
 def main():
-    produits = []
-    page_livre = []
-    liste_rubrique = []
+    books_data_list = []
+    book_pages = []
+    categories_list = []
 
     html_home = extract.extract_html(url_home)
     soup_home = BeautifulSoup(html_home, "html.parser")
 
-    # ***************************        recupérer les rubriques     **********************
+    # ***************************        Retrieve Categories     **********************
 
-    liste_rubrique = extract.data_rubrique(soup_home, liste_rubrique, url_home_relatif)
+    categories_list = extract.all_categories(soup_home, categories_list, url_home_relatif)
 
-    for rubrique in liste_rubrique[2:3]:
-        produits.clear()
-        page_livre.clear()
-        print(rubrique.get("name"))
-        name_csv = rubrique.get("name")
-        url_current = rubrique.get("url")
+    for category in categories_list[first_category:last_category]:
+        books_data_list.clear()
+        book_pages.clear()
+        print(category.get("name"))
+        name_csv = category.get("name")
+        url_current = category.get("url")
 
         while True:
             html_current = extract.extract_html(url_current)
             soup_current = BeautifulSoup(html_current, "html.parser")
 
-            if extract.lien_next(soup_current):
-                page_livre += extract.all_url_livre(soup_current)
-                url_current = transform.delete_url_index(url_current) + extract.lien_next(soup_current)["href"]
+            if extract.next_link(soup_current):
+                book_pages += extract.all_book_urls(soup_current, url_home_relatif)
+                url_current = transform.delete_url_index(url_current) + extract.next_link(soup_current)["href"]
                 print(url_current)
             else:
-                page_livre += extract.all_url_livre(soup_current)
+                book_pages += extract.all_book_urls(soup_current, url_home_relatif)
                 break
 
-        for page in page_livre:
+        for page in book_pages:
             print(f"la page est: {page}")
             html_page = extract.extract_html(page)
             soup_page = BeautifulSoup(html_page, "html.parser")
-            transform.data_livres(soup_page, produits, page)
-            load.fichier_csv(produits, name_csv)
+            transform.data_books(soup_page, books_data_list, page, url_home_relatif)
+            load.csv_file(books_data_list, name_csv)
 
-        # *******************************     enregistrement des images     *********************
+        # *******************************     Save images    *********************
 
         if not os.path.exists(f"images/{name_csv}"):
             os.makedirs(f"images/{name_csv}")
 
-        for produit in produits:
-            url_img = produit.get("img_url")
-            name_livre = produit.get("title")
+        for book in books_data_list:
+            url_img = book.get("img_url")
+            name_livre = book.get("title")
             name_livre = transform.clean_name(name_livre)
             image_save_path = os.path.join(f"images/{name_csv}", f"{name_livre}.jpg")
             load.download_image(url_img, image_save_path)
