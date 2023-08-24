@@ -19,4 +19,9 @@ Install project with powershell windows:
     pip install -r requirement.txt
     python projet1_perso.py
 ```
+
+## choice of the number of categories scrapping 
+
+If you don't want to scrap all categories, so change in "projet1_perso.py" the line 14 and 15 with the first and last category that you want.
     
+![selection_rubrique](https://github.com/coyote95/projet_2_oc/assets/141831464/6452823c-edc4-406b-a83f-a7db21d18686)
