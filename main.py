@@ -6,13 +6,14 @@ import os
 import extract
 import transform
 import load
+import time
 
 url_home = "http://books.toscrape.com/index.html"
 url_home_relatif = transform.url_relatif(url_home)
 
 # category between 0 and 50
 first_category = 0
-last_category = 50
+last_category = 1
 
 
 def main():
@@ -41,12 +42,14 @@ def main():
             if extract.next_link(soup_current):
                 list_all_urls_page += extract.all_book_urls(soup_current, url_home_relatif)
                 url_current = transform.url_relatif(url_current) + extract.next_link(soup_current)["href"]
+                print(url_current)
             else:
                 list_all_urls_page += extract.all_book_urls(soup_current, url_home_relatif)
+                print(url_current)
                 break
 
         for page in list_all_urls_page:
-            print(f"la page est: {page}")
+            print(f"Sracpping page: {page}")
             html_page = extract.extract_html(page)
             soup_page = BeautifulSoup(html_page, "html.parser")
             books_data_list.append(transform.dict_data_books(soup_page, page, url_home_relatif))
@@ -57,12 +60,20 @@ def main():
         if not os.path.exists(f"images/{name_csv}"):
             os.makedirs(f"images/{name_csv}")
 
+        i = 0
         for book in books_data_list:
+            i += 1
             url_img = book.get("img_url")
+            print(f'link image download:{url_img}')
             name_livre = book.get("title")
             name_livre = transform.clean_name(name_livre)
             image_save_path = os.path.join(f"images/{name_csv}", f"{name_livre}.jpg")
-            load.download_image(url_img, image_save_path)
+            if not os.path.exists(image_save_path):
+                load.download_image(url_img, image_save_path)
+            else:
+                print(i)
+                image_save_path = os.path.join(f"images/{name_csv}", f"{name_livre}_{i}.jpg")
+                load.download_image(url_img, image_save_path)
 
     return
 

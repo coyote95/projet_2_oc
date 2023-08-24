@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import time
 """
     Module for extract data from HTML content
 
@@ -14,6 +15,7 @@ def extract_html(url):
     """
     response = requests.get(url)
     if response.status_code == 200:
+        time.sleep(0.1)
         html = response.content
     else:
         print("Connection failed!")
