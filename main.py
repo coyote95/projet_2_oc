@@ -11,7 +11,7 @@ url_home = "http://books.toscrape.com/index.html"
 url_home_relatif = transform.delete_url_index(url_home)
 
 # category between 0 and 50
-first_category = 1
+first_category = 0
 last_category = 50
 
 
@@ -45,7 +45,7 @@ def main():
             else:
                 book_pages += extract.all_book_urls(soup_current, url_home_relatif)
                 break
-        book_data_dict={}
+
         for page in book_pages:
             print(f"la page est: {page}")
             html_page = extract.extract_html(page)
