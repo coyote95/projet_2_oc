@@ -1,11 +1,12 @@
 import csv
 import urllib.request
-import os
+
 
 """
 Module for load:    -data in csv file 
                     -load image
 """
+
 
 def csv_file(products, csv_name):
     """
@@ -38,4 +39,3 @@ def download_image(image_url, save_path):
     """
     urllib.request.urlretrieve(image_url, save_path)
     return
-

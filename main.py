@@ -1,12 +1,9 @@
-import csv
 from bs4 import BeautifulSoup
-import requests
-import urllib.request
 import os
 import extract
 import transform
 import load
-import time
+
 
 url_home = "http://books.toscrape.com/index.html"
 url_home_relatif = transform.url_relatif(url_home)
