@@ -14,9 +14,9 @@ def url_relatif(url):
     :param url: (str) url with ex /index.html
     :return: (str) url modified ex /
     """
-    path_segement=url.split("/")
-    new_path_segement=path_segement[:-1]
-    new_url="/".join(new_path_segement)+"/"
+    path_segement = url.split("/")
+    new_path_segement = path_segement[:-1]
+    new_url = "/".join(new_path_segement) + "/"
     return new_url
 
 
@@ -39,8 +39,19 @@ def clean_name(file_title):
     return new_name
 
 
-def dict_data_books(soup, page, url_home_relatif):
+def delete_symbol_pounds(price):
+    return price.replace("£", "")
 
+
+def find_digits(sentence):
+    digits = ""
+    for character in sentence:
+        if character.isdigit():
+            digits += character
+    return digits
+
+
+def dict_data_books(soup, page, url_home_relatif):
     """
     Create dictionnary with data information
     :param soup: Beautiful soup object
@@ -51,9 +62,9 @@ def dict_data_books(soup, page, url_home_relatif):
     td = extract.column_table(soup)
     book_info_dict = {
         "universal_product_code(upc)": td[0],
-        "price_excluding_tax": td[2],
-        "price_including_tax": td[3],
-        "number_available": td[5],
+        "price_excluding_tax": delete_symbol_pounds(td[2]),
+        "price_including_tax": delete_symbol_pounds(td[3]),
+        "number_available": find_digits(td[5]),
         "review_rating": td[6],
         "title": soup.find('h1').string,
         "product_page_url": page,
