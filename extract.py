@@ -1,5 +1,6 @@
 import requests
 import time
+
 """
     Module for extract data from HTML content
 
@@ -20,6 +21,18 @@ def extract_html(url):
         print("Connection failed!")
         html = "0"
     return html
+
+
+def review_rating(soup):
+    """
+    Extract review rating
+    :param soup: BeautifulSoup object
+    :return: number (str)
+    """
+    star = soup.find("p", class_="star-rating")
+    if star:
+        number_star = star["class"][1]
+        return number_star
 
 
 def column_table(soup):

@@ -9,8 +9,8 @@ url_home = "http://books.toscrape.com/index.html"
 url_home_relatif = transform.url_relatif(url_home)
 
 # category between 0 and 51
-first_category = 1
-last_category =2
+first_category = 0
+last_category =51
 
 
 def main():
